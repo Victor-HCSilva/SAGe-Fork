@@ -39,8 +39,6 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'home',
-    #'cadastro',
-    #'login',
     'portal_do_paciente',
     'pacientes',
     'medicos',
