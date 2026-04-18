@@ -1,10 +1,26 @@
+{% extends 'base.html' %}
 {% load static %}
 
-<link rel="stylesheet" href="{% static 'css/style_remover_paciente.css' %}">
-<a href="{% url 'gestao_de_pacientes' id=adm.id %}">voltar</a>
-<h1>Remover Paciente</h1>
-<p>Você tem certeza que deseja remover o paciente {{ paciente.nome }}?</p>
-<form method="post">
-    {% csrf_token %}
-    <button type="submit">Remover</button>
-    
+{% block title %}Remover Paciente - SAGe{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-5">
+    <div class="col-md-6 text-center">
+        <div class="card shadow-sm border-0">
+            <div class="card-body p-5">
+                <i class="bi bi-person-x-fill text-danger display-1 mb-4"></i>
+                <h1 class="h2 mb-3">Confirmar Remoção</h1>
+                <p class="lead mb-4">Você tem certeza que deseja remover o paciente <strong>{{ paciente.nome }}</strong>?</p>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <div class="d-grid gap-2 d-md-block mt-4">
+                        <button type="submit" class="btn btn-danger btn-lg px-5 me-md-2">Sim, Remover</button>
+                        <a href="{% url 'gestao_de_pacientes' id=adm.id %}" class="btn btn-outline-secondary btn-lg px-5">Cancelar</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,3 +1,53 @@
-check_list.md
-de.md
-db.sqlite3
+# Ignorar arquivos de cache
+__pycache__/
+*.pyc
+*.pyd
+*.pyo
+*.egg-info/
+.pytest_cache/
+
+# Ignorar pastas de ambiente virtual
+venv/
+env/
+.venv/
+
+# Ignorar arquivos de banco de dados SQLite
+*.sqlite3
+*.db-journal
+
+# Ignorar arquivos de mídia e estáticos gerados (se não versionados)
+/media/
+/static_collected/
+
+# Ignorar logs
+*.log
+
+# Ignorar arquivos de configurações sensíveis
+.env
+*.env
+settings_local.py
+*/settings_local.py
+
+# Ignorar arquivos do IDE (ex: PyCharm, VS Code)
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Ignorar o diretório node_modules se você usar frontend
+node_modules/
+
+# Ignorar o diretório coverage (se usar testes de cobertura)
+htmlcov/
+.coverage
+
+# Ignorar diretórios de build
+build/
+dist/
+
+# Ignorar arquivos de empacotamento
+*.egg
+*.whl
+
+# Ignorar diretórios específicos do Django para testes
+.cache/

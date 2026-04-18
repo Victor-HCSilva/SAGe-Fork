@@ -1,12 +1,27 @@
 {% extends 'base.html' %}
+{% load static %}
 
-{% block title %}Página Específica{% endblock %}
+{% block title %}Página de Teste - SAGe{% endblock %}
 
 {% block content %}
-  <div class="container">
-    <h1>Título da Página Específica</h1>
-    <p>Este é um texto de exemplo para a página específica.</p>
-  </div>
-
-  
+<div class="row py-5">
+    <div class="col-md-8 mx-auto">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-warning text-dark text-center py-3">
+                <h2 class="mb-0"><i class="bi bi-bug-fill me-2"></i>Página de Teste</h2>
+            </div>
+            <div class="card-body p-5">
+                <h1 class="h3 mb-4">Título da Página de Teste</h1>
+                <p class="lead">Este é um texto de exemplo para a página de teste, utilizando componentes do Bootstrap 5 e ícones nativos.</p>
+                <div class="alert alert-info border-0 shadow-sm">
+                    <i class="bi bi-info-circle-fill me-2"></i>Esta página serve apenas para verificação de estilos.
+                </div>
+                <div class="mt-4">
+                    <button class="btn btn-primary me-2">Botão Primário</button>
+                    <button class="btn btn-outline-secondary">Botão Outline</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 {% endblock %}

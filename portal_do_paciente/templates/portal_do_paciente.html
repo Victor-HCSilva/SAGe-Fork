@@ -1,235 +1,232 @@
 {% extends 'base.html' %}
 {% load static %}
 
-{% block title %}Portal do paciente{% endblock %}
+{% block title %}Portal do Paciente - SAGe{% endblock %}
+
 {% block content %}
-
-<link rel="stylesheet" href="{% static 'css/style_portal_do_paciente.css' %}">
-<script src="{% static 'js/js_portal_do_paciente.js' %}" defer></script>
-
-<header>
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-                <img src="{% static 'images/portal_do_paciente_icon.png' %}" alt="home" width="30" height="30">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
-                    aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'home' %}">Home</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="{% url 'logout' %}">Sair</a>
-                    </li>
-                </ul>
-            </div>
-        </div>
-    </nav>
-</header>
-
-<div id="div-ola-name" style="text-indent: 60px;">
-    <strong><p>Olá, {{ name }}</p></strong>
+<div class="row mb-4">
+    <div class="col">
+        <h1 class="display-5">Portal do Paciente</h1>
+        <p class="lead">Olá, <strong>{{ name }}</strong>. Bem-vindo ao seu portal de saúde.</p>
+    </div>
 </div>
 
-<div class="titulo_portal_do_paciente">
-    <div class="titulo">
-        <h1>Portal do paciente</h1>
+<div class="card shadow-sm border-0">
+    <div class="card-header bg-white">
+        <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="lista-de-medicos-tab" data-bs-toggle="tab" data-bs-target="#lista_de_medicos" type="button" role="tab" aria-controls="lista_de_medicos" aria-selected="true"><i class="bi bi-people-fill me-1"></i> Médicos</button>
+            </li>
+            {% if not paciente.is_staff %}
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="suas-consultas-tab" data-bs-toggle="tab" data-bs-target="#suas_consultas" type="button" role="tab" aria-controls="suas_consultas" aria-selected="false"><i class="bi bi-calendar-check-fill me-1"></i> Minhas Consultas</button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="paciente-tab" data-bs-toggle="tab" data-bs-target="#paciente" type="button" role="tab" aria-controls="paciente" aria-selected="false"><i class="bi bi-person-lines-fill me-1"></i> Meus Dados</button>
+                </li>
+            {% endif %}
+            {% if paciente.is_staff %}
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" href="{% url 'gestao_de_pacientes' id=paciente.id %}"><i class="bi bi-person-gear me-1"></i> Gerenciar Pacientes</a>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <a class="nav-link" href="{% url 'gestao_de_medicos' id=paciente.id %}"><i class="bi bi-person-badge-fill me-1"></i> Gerenciar Médicos</a>
+                </li>
+            {% endif %}
+            <li class="nav-item" role="presentation">
+                <button class="nav-link" id="imc-tab" data-bs-toggle="tab" data-bs-target="#imc" type="button" role="tab" aria-controls="imc" aria-selected="false"><i class="bi bi-calculator-fill me-1"></i> Calcular IMC</button>
+            </li>
+            {% if not paciente.is_staff %}
+                <li class="nav-item ms-auto" role="presentation">
+                    <a class="btn btn-primary btn-sm mt-1" href="{% url 'agendar_consulta' id=paciente.id %}"><i class="bi bi-plus-lg me-1"></i> Agendar Consulta</a>
+                </li>
+            {% endif %}
+        </ul>
     </div>
-    <div class="main">
-      <div class="container">
-          <nav class="nav nav-tabs" id="myTab" role="tablist">
-              <a class="nav-link active" id="lista-de-medicos-tab" data-bs-toggle="tab" href="#lista_de_medicos"
-                 role="tab" aria-controls="lista_de_medicos" aria-selected="true">Médicos disponíveis</a>
-              
-              
-                 {% if not paciente.is_staff %}
-                 <a class="nav-link" id="suas-consultas-tab" data-bs-toggle="tab" href="#suas_consultas" role="tab"
-                 aria-controls="suas_consultas" aria-selected="false">Suas consultas</a>
-              <a class="nav-link" id="paciente-tab" data-bs-toggle="tab" href="#paciente" role="tab"
-                 aria-controls="paciente" aria-selected="false">Meus dados</a>
-                 <a class="nav-link" href="{% url 'agendar_consulta' id=paciente.id %}">Agendar nova consulta</a>
-              {% endif %}
-              
-              {% if paciente.is_staff %}
-                  <a class="nav-link" href="{% url 'gestao_de_pacientes' id=paciente.id %}">Gerenciar pacientes</a>
-                  <a class="nav-link" href="{% url 'gestao_de_medicos' id=paciente.id %}">Gerenciar Médicos</a>
-              {% endif %}
-              <a class="nav-link" id="imc-tab" data-bs-toggle="tab" href="#imc" role="tab" aria-controls="imc"
-                 aria-selected="false">Calcular IMC</a>
-          </nav>
-    
-          <div class="tab-content" id="myTabContent">
-              <div class="tab-pane fade show active" id="lista_de_medicos" role="tabpanel"
-                   aria-labelledby="lista-de-medicos-tab">
-                  <h3>Médicos disponíveis</h3>
-    
-                   <form method="get" class="mb-3">
-                    <div class="row">
-                         <div class="col-md-6">
-                             <div class="input-group">
-                                  <input type="text" class="form-control" name="search"
-                                         placeholder="Pesquisar médico por nome" value="{{ search_term }}">
-                                      <div class="input-group-append">
-                                           <button class="btn btn-outline-secondary" type="submit">Pesquisar</button>
-                                       </div>
-                              </div>
-                         </div>
-                      <div class="col-md-6">
-                         <div class="input-group">
-                                   <select class="form-control" name="specialty">
-                                       <option value="">Todas as especialidades</option>
-                                      {% for specialty in specialties %}
-                                          <option value="{{ specialty.nome }}" {% if specialty_term == specialty.nome %}selected{% endif %}>
-                                              {{ specialty.nome }}
-                                          </option>
-                                     {% endfor %}
-                                  </select>
-                                 <div class="input-group-append">
-                                  <button class="btn btn-outline-secondary" type="submit">Filtrar</button>
-                               </div>
-                           </div>
-                          </div>
-                     </div>
-                  </form>
-    
-                  <table class="table table-striped">
-                      <thead>
-                      <tr>
-                          <th>Nome</th>
-                          <th>Especialidade</th>
-                          <th>CRM</th>
-                      </tr>
-                      </thead>
-                      <tbody>
-                      {% if medicos %}
-                          {% for medico in medicos %}
-                              <tr>
-                                  <td>{{ medico.nome }}</td>
-                                  <td>{{ medico.especialidade }}</td>
-                                  <td>{{ medico.crm }}</td>
-                              </tr>
-                          {% endfor %}
-                      {% else %}
-                          <tr>
-                              <td colspan="3">Sem médicos cadastrados</td>
-                          </tr>
-                      {% endif %}
-                      </tbody>
-                  </table>
-    
-                  <ul class="pagination justify-content-center">
-                      {% if medicos.has_previous %}
-                          <li class="page-item">
-                              <a class="page-link"
-                                 href="?page=1{% if search_term %}&search={{ search_term }}{% endif %}{% if specialty_term %}&specialty={{ specialty_term }}{% endif %}"
-                                 aria-label="First">
-                                  <span aria-hidden="true">« Primeira</span>
-                              </a>
-                          </li>
-                          <li class="page-item">
-                              <a class="page-link"
-                                 href="?page={{ medicos.previous_page_number }}{% if search_term %}&search={{ search_term }}{% endif %}{% if specialty_term %}&specialty={{ specialty_term }}{% endif %}"
-                                 aria-label="Previous">
-                                  <span aria-hidden="true">‹ Anterior</span>
-                              </a>
-                          </li>
-                      {% endif %}
-    
-                      <li class="page-item disabled">
-                          <a class="page-link" href="#">Página {{ medicos.number }} de {{ medicos.paginator.num_pages }}</a>
-                      </li>
-    
-    
-                      {% if medicos.has_next %}
-                          <li class="page-item">
-                              <a class="page-link"
-                                 href="?page={{ medicos.next_page_number }}{% if search_term %}&search={{ search_term }}{% endif %}{% if specialty_term %}&specialty={{ specialty_term }}{% endif %}"
-                                 aria-label="Next">
-                                  <span aria-hidden="true">Próxima ›</span>
-                              </a>
-                          </li>
-                          <li class="page-item">
-                              <a class="page-link"
-                                 href="?page={{ medicos.paginator.num_pages }}{% if search_term %}&search={{ search_term }}{% endif %}{% if specialty_term %}&specialty={{ specialty_term }}{% endif %}"
-                                 aria-label="Last">
-                                  <span aria-hidden="true">Última »</span>
-                              </a>
-                          </li>
-                      {% endif %}
-                  </ul>
-    
-              </div>
-              <div class="tab-pane fade" id="suas_consultas" role="tabpanel" aria-labelledby="suas-consultas-tab">
-                  <h3>Consultas marcadas</h3>
-                  <br>
-                  <table class="table table-striped">
-                      <thead>
-                      <tr>
-                          <th>Nome do médico(a)</th>
-                          <th>Especialidade</th>
-                          <th>Data da consulta</th>
-                          <th>Horário da consulta</th>
-                      </tr>
-                      </thead>
-                      <tbody>
-                      {% for agendamento in agendamentos %}
-                          {% if agendamento.paciente.id == paciente.id %}
-                              <tr>
-                                  <td>{{ agendamento.medico.nome }}</td>
-                                  <td>{{ agendamento.medico.especialidade }}</td>
-                                  <td>{{ agendamento.data | date:'d/m/Y' }}</td>
-                                  <td>{{ agendamento.hora|date:"H:i" }}</td>
-                              </tr>
-                          {% endif %}
-                      {% empty %}
-                          <tr>
-                              <td colspan="4">Nenhuma consulta agendada.</td>
-                          </tr>
-                      {% endfor %}
-                      </tbody>
-                  </table>
-              </div>
-    
-    
-              <div class="tab-pane fade" id="paciente" role="tabpanel" aria-labelledby="paciente-tab">
-                  <h3>Seus dados</h3>
-                  <table class="table table-striped">
-                      <thead>
-                      <tr>
-                          <th>Nome</th>
-                          <th>Data de nascimento</th>
-                          <th>Email</th>
-                      </tr>
-                      </thead>
-                      <tbody>
-                      <tr>
-                          <td>{{ paciente.nome|title }}</td>
-                          <td>{{ paciente.data_de_nascimento | date:'d/m/Y' }}</td>
-                          <td>{{ paciente.email }}</td>
-                      </tr>
-                      </tbody>
-                  </table>
-              </div>
-    
-              <div class="tab-pane fade" id="imc" role="tabpanel" aria-labelledby="imc-tab">
-                  <div id="z">
-                      <div>
-                          <label for="number">Peso</label>
-                          <input id="peso" type="number">
-                          <br>
-                          <label for="number">Altura</label>
-                          <input id="altura" type="number">
-                          <br>
-                          <button class="btn-imc" onclick="calcularIMC()">Calcular</button>
-                          <span id="resultado"></span>
-                      </div>
-                  </div>
-              </div>
-          </div>
-      </div>
+    <div class="card-body">
+        <div class="tab-content mt-3" id="myTabContent">
+            <!-- Médicos Disponíveis -->
+            <div class="tab-pane fade show active" id="lista_de_medicos" role="tabpanel" aria-labelledby="lista-de-medicos-tab">
+                <div class="row g-3 mb-4">
+                    <div class="col-md-12">
+                        <form method="get" class="row g-2">
+                            <div class="col-md-5">
+                                <div class="input-group">
+                                    <span class="input-group-text"><i class="bi bi-search"></i></span>
+                                    <input type="text" class="form-control" name="search" placeholder="Pesquisar médico por nome" value="{{ search_term }}">
+                                </div>
+                            </div>
+                            <div class="col-md-5">
+                                <select class="form-select" name="specialty">
+                                    <option value="">Todas as especialidades</option>
+                                    {% for specialty in specialties %}
+                                        <option value="{{ specialty.nome }}" {% if specialty_term == specialty.nome %}selected{% endif %}>{{ specialty.nome }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-md-2 d-grid">
+                                <button class="btn btn-outline-primary" type="submit">Filtrar</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-light">
+                            <tr>
+                                <th>Nome</th>
+                                <th>Especialidade</th>
+                                <th>CRM</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% if medicos %}
+                                {% for medico in medicos %}
+                                    <tr>
+                                        <td>{{ medico.nome }}</td>
+                                        <td><span class="badge bg-info text-dark">{{ medico.especialidade }}</span></td>
+                                        <td>{{ medico.crm }}</td>
+                                    </tr>
+                                {% endfor %}
+                            {% else %}
+                                <tr>
+                                    <td colspan="3" class="text-center py-4 text-muted">Sem médicos cadastrados</td>
+                                </tr>
+                            {% endif %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Paginação Médicos -->
+                <nav aria-label="Navegação de médicos">
+                    <ul class="pagination justify-content-center mt-4">
+                        {% if medicos.has_previous %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page=1{% if search_term %}&search={{ search_term }}{% endif %}{% if specialty_term %}&specialty={{ specialty_term }}{% endif %}">Primeira</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ medicos.previous_page_number }}{% if search_term %}&search={{ search_term }}{% endif %}{% if specialty_term %}&specialty={{ specialty_term }}{% endif %}">Anterior</a>
+                            </li>
+                        {% endif %}
+                        <li class="page-item disabled"><span class="page-link">Página {{ medicos.number }} de {{ medicos.paginator.num_pages }}</span></li>
+                        {% if medicos.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ medicos.next_page_number }}{% if search_term %}&search={{ search_term }}{% endif %}{% if specialty_term %}&specialty={{ specialty_term }}{% endif %}">Próxima</a>
+                            </li>
+                            <li class="page-item">
+                                <a class="page-link" href="?page={{ medicos.paginator.num_pages }}{% if search_term %}&search={{ search_term }}{% endif %}{% if specialty_term %}&specialty={{ specialty_term }}{% endif %}">Última</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+
+            <!-- Suas Consultas -->
+            {% if not paciente.is_staff %}
+                <div class="tab-pane fade" id="suas_consultas" role="tabpanel" aria-labelledby="suas-consultas-tab">
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr>
+                                    <th>Médico(a)</th>
+                                    <th>Especialidade</th>
+                                    <th>Data</th>
+                                    <th>Horário</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for agendamento in agendamentos %}
+                                    {% if agendamento.paciente.id == paciente.id %}
+                                        <tr>
+                                            <td><strong>{{ agendamento.medico.nome }}</strong></td>
+                                            <td>{{ agendamento.medico.especialidade }}</td>
+                                            <td>{{ agendamento.data | date:'d/m/Y' }}</td>
+                                            <td>{{ agendamento.hora|date:"H:i" }}</td>
+                                        </tr>
+                                    {% endif %}
+                                {% empty %}
+                                    <tr>
+                                        <td colspan="4" class="text-center py-4 text-muted">Nenhuma consulta agendada.</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Meus Dados -->
+                <div class="tab-pane fade" id="paciente" role="tabpanel" aria-labelledby="paciente-tab">
+                    <div class="row justify-content-center">
+                        <div class="col-md-8">
+                            <ul class="list-group list-group-flush border rounded">
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div class="fw-bold">Nome completo</div>
+                                    <span>{{ paciente.nome|title }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div class="fw-bold">Data de nascimento</div>
+                                    <span>{{ paciente.data_de_nascimento | date:'d/m/Y' }}</span>
+                                </li>
+                                <li class="list-group-item d-flex justify-content-between align-items-center">
+                                    <div class="fw-bold">Email</div>
+                                    <span>{{ paciente.email }}</span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+            <!-- Calcular IMC -->
+            <div class="tab-pane fade" id="imc" role="tabpanel" aria-labelledby="imc-tab">
+                <div class="row justify-content-center">
+                    <div class="col-md-6">
+                        <div class="card bg-body-tertiary p-4">
+                            <div class="mb-3">
+                                <label for="peso" class="form-label">Peso (kg)</label>
+                                <input id="peso" type="number" step="0.1" class="form-control" placeholder="Ex: 75.5">
+                            </div>
+                            <div class="mb-3">
+                                <label for="altura" class="form-label">Altura (m)</label>
+                                <input id="altura" type="number" step="0.01" class="form-control" placeholder="Ex: 1.75">
+                            </div>
+                            <div class="d-grid gap-2">
+                                <button class="btn btn-primary" onclick="calcularIMC()">Calcular IMC</button>
+                            </div>
+                            <div id="resultado" class="mt-4 text-center h4"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
+</div>
+
+{% block extra_js %}
+<script src="{% static 'js/js_portal_do_paciente.js' %}"></script>
+<script>
+    function calcularIMC() {
+        const peso = parseFloat(document.getElementById('peso').value);
+        const altura = parseFloat(document.getElementById('altura').value);
+        const resultado = document.getElementById('resultado');
+
+        if (peso > 0 && altura > 0) {
+            const imc = (peso / (altura * altura)).toFixed(2);
+            let classificacao = '';
+
+            if (imc < 18.5) classificacao = 'Abaixo do peso';
+            else if (imc < 25) classificacao = 'Peso normal';
+            else if (imc < 30) classificacao = 'Sobrepeso';
+            else classificacao = 'Obesidade';
+
+            resultado.innerHTML = `Seu IMC é <strong>${imc}</strong> (${classificacao})`;
+            resultado.className = 'mt-4 text-center h4 ' + (imc < 25 ? 'text-success' : 'text-danger');
+        } else {
+            resultado.innerHTML = 'Por favor, insira valores válidos.';
+            resultado.className = 'mt-4 text-center h4 text-warning';
+        }
+    }
+</script>
+{% endblock %}
 {% endblock %}

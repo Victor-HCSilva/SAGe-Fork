@@ -1,155 +1,154 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Médicos</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-</head>
-<body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-          <div class="container-fluid">
-            <a class="navbar-brand" href="#">
-              <img src="{% static 'images/portal_do_paciente_icon.png' %}" alt="home" width="30" height="30">
-            </a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-              <ul class="navbar-nav">  
-                <li class="nav-item">
-                  <a class="nav-link" href="{% url 'portal_do_paciente' id=id%}">Voltar </a>
-                  
-                  {% comment %}
-                  <a class="nav-link" href=#>Guia rápido</a>
-                  {% endcomment %}
-                  
-                </li>
-                <a class="nav-link" href="{% url 'gestao_de_pacientes' id=id %}">Cadastre um novo paciente </a>
-                <li>
-<body >
-    
-    <div class="container">
-        {{ message }}
-        <h1 class="h1_max">Gerenciar Médicos</h1>
-        <br>
 
-                </li>
-              </ul>
-              
+{% block title %}Gerenciar Médicos - SAGe{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-person-badge-fill me-2"></i>Gerenciamento de Médicos</h1>
+    <div>
+        <a href="{% url 'portal_do_paciente' id=id %}" class="btn btn-outline-secondary me-2"><i class="bi bi-arrow-left"></i> Voltar</a>
+        <a href="{% url 'gestao_de_pacientes' id=id %}" class="btn btn-primary"><i class="bi bi-person-gear me-1"></i> Gerenciar Pacientes</a>
+    </div>
+</div>
+
+<div class="row g-4 mb-5">
+    <!-- Busca -->
+    <div class="col-12">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <form method="get" class="row g-3 align-items-end">
+                    <div class="col-md-10">
+                        <label for="search_cpf" class="form-label fw-bold">Buscar por CPF</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            <input type="text" class="form-control" id="search_cpf" name="search_cpf" placeholder="000.000.000-00" value="{{ search_term }}">
+                        </div>
+                    </div>
+                    <div class="col-md-2 d-grid">
+                        <button type="submit" class="btn btn-success">Pesquisar</button>
+                    </div>
+                </form>
             </div>
-          </div>
-        </nav>
-      </header>
-      
-    <div class="container">
-        <a class="nav-link" href="{% url 'portal_do_paciente' id=id %}">Voltar</a>
-        <h1>Médicos</h1>
-        
-        <form method="get" class="mb-3">
-            <div class="row">
-                <div class="col-md-4">
-                    <input type="text" class="form-control" name="search_cpf" placeholder="Buscar por CPF" value="{{ search_term }}">
-                </div>
-                <div class="col-md-2">
-                    <button type="submit" class="btn btn-primary">Pesquisar</button>
-                </div>
-            </div>
-            
-            <h2>Lista de Médicos</h2>
-        <table class="table table-striped">
-            <thead>
-                <tr>
-                <th scope="col">Nome</th>
-                <th scope="col">Email</th>
-                <th scope="col">Data de Nascimento</th>
-                <th scope="col">CPF</th>
-                <th scope="col">CRM</th>
-                <th scope="col">Especialidade</th>
-                <th scope="col">Editar</th>
-                <th scope="col">Excluir</th>
-                </tr>
-            </thead>
-            <tbody>
-            {% for medico in medicos %}
-            <tr>
-                <td>{{ medico.nome }}</td>
-                <td>{{ medico.email }}</td>
-                <td>{{ medico.data_de_nascimento|date:"d/m/Y" }}</td>
-                <td>{{ medico.cpf }}</td>
-                <td>{{ medico.crm }}</td>
-                <td>{{ medico.especialidade }}</td>
-                <td><a href="{% url 'editar_medico' id_medico=medico.id id_adm=id %}">Editar</a></td>
-                <td><a href="{% url 'remover_medico' id_medico=medico.id id_adm=id %}">Excluir</a></td>
-            </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-        <div class="pagination">
-            <span class="step-links">
-                {% if medicos.has_previous %}
-                    <a href="?page=1{% if search_term %}&search_cpf={{search_term}}{% endif %}">« Primeira</a>
-                    <a href="?page={{ medicos.previous_page_number }}{% if search_term %}&search_cpf={{search_term}}{% endif %}">Anterior</a>
-                {% endif %}
-        
-                <span class="current">
-                    Página {{ medicos.number }} de {{ medicos.paginator.num_pages }}.
-                </span>
-        
-                {% if medicos.has_next %}
-                    <a href="?page={{ medicos.next_page_number }}{% if search_term %}&search_cpf={{search_term}}{% endif %}">Próxima</a>
-                    <a href="?page={{ medicos.paginator.num_pages }}{% if search_term %}&search_cpf={{search_term}}{% endif %}">Última »</a>
-                {% endif %}
-            </span>
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <br>
-        </form class="container">
-        <h2 class="text-center">Adicionar Médico</h2>
-        <form method="post" class="container">
-            {% csrf_token %}
-            <div class="mb-3">
-                 <div class="mb-3">
-                    {{ form.nome.label_tag }}
-                    {{ form.nome }}
-                    </div>
-                
-                 <div class="mb-3">
-                    {{ form.email.label_tag }}
-                    {{ form.email }}
-                    </div>
 
-                 <div class="mb-3">
-                   {{ form.data_de_nascimento.label_tag }}
-                   {{ form.data_de_nascimento }}
-                 </div>
-
-                 <div class="mb-3">
-                    {{ form.cpf.label_tag }}
-                    {{ form.cpf }}
-                 </div>
-
-                  <div class="mb-3">
-                    {{ form.crm.label_tag }}
-                    {{ form.crm }}
-                  </div>
-
-                 <div class="mb-3">
-                     {{ form.especialidade.label_tag }}
-                    {{ form.especialidade }}
-                 </div>
-                    <br>
-
-                 <div class="mb-3">
-                     {{ form.password.label_tag }}
-                    {{ form.password }}
-                    </div>
+    <!-- Lista de Médicos -->
+    <div class="col-12">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white">
+                <h2 class="h5 mb-0 py-2">Lista de Médicos</h2>
             </div>
-            <button type="submit" class="btn btn-primary">Salvar</button>
-        </form>
-        <br>
-        
-    <br>
-</body>
-</html>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Nome</th>
+                            <th>Email</th>
+                            <th>Nascimento</th>
+                            <th>CPF</th>
+                            <th>CRM</th>
+                            <th>Especialidade</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for medico in medicos %}
+                            <tr>
+                                <td><strong>{{ medico.nome }}</strong></td>
+                                <td>{{ medico.email }}</td>
+                                <td>{{ medico.data_de_nascimento|date:"d/m/Y" }}</td>
+                                <td>{{ medico.cpf }}</td>
+                                <td>{{ medico.crm }}</td>
+                                <td><span class="badge bg-info text-dark">{{ medico.especialidade }}</span></td>
+                                <td>
+                                    <div class="btn-group btn-group-sm">
+                                        <a class="btn btn-outline-primary" href="{% url 'editar_medico' id_medico=medico.id id_adm=id %}" title="Editar"><i class="bi bi-pencil-square"></i></a>
+                                        <a class="btn btn-outline-danger" href="{% url 'remover_medico' id_medico=medico.id id_adm=id %}" title="Excluir"><i class="bi bi-trash"></i></a>
+                                    </div>
+                                </td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="7" class="text-center py-4 text-muted">Sem médicos cadastrados</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- Paginação -->
+            <div class="card-footer bg-white py-3">
+                <nav aria-label="Navegação de médicos">
+                    <ul class="pagination justify-content-center mb-0">
+                        {% if medicos.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?page=1{% if search_term %}&search_cpf={{search_term}}{% endif %}">Primeira</a></li>
+                            <li class="page-item"><a class="page-link" href="?page={{ medicos.previous_page_number }}{% if search_term %}&search_cpf={{search_term}}{% endif %}">Anterior</a></li>
+                        {% endif %}
+                        <li class="page-item disabled"><span class="page-link">Página {{ medicos.number }} de {{ medicos.paginator.num_pages }}</span></li>
+                        {% if medicos.has_next %}
+                            <li class="page-item"><a class="page-link" href="?page={{ medicos.next_page_number }}{% if search_term %}&search_cpf={{search_term}}{% endif %}">Próxima</a></li>
+                            <li class="page-item"><a class="page-link" href="?page={{ medicos.paginator.num_pages }}{% if search_term %}&search_cpf={{search_term}}{% endif %}">Última</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
+
+    <!-- Adicionar Médico -->
+    <div class="col-12">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white">
+                <h2 class="h5 mb-0 py-2">Adicionar Novo Médico</h2>
+            </div>
+            <div class="card-body">
+                <form method="post" class="row g-3">
+                    {% csrf_token %}
+                    <div class="col-md-6 mb-2">
+                        {{ form.nome.label_tag }}
+                        {{ form.nome }}
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        {{ form.email.label_tag }}
+                        {{ form.email }}
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        {{ form.data_de_nascimento.label_tag }}
+                        {{ form.data_de_nascimento }}
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        {{ form.cpf.label_tag }}
+                        {{ form.cpf }}
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        {{ form.crm.label_tag }}
+                        {{ form.crm }}
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        {{ form.especialidade.label_tag }}
+                        {{ form.especialidade }}
+                    </div>
+                    <div class="col-md-6 mb-2">
+                        {{ form.password.label_tag }}
+                        {{ form.password }}
+                    </div>
+                    <div class="col-12 mt-4 d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">Salvar Médico</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Apply Bootstrap styling to Django forms
+    document.querySelectorAll('input, select, textarea').forEach(el => {
+        if (!el.classList.contains('form-control') && !el.classList.contains('form-select')) {
+            el.classList.add('form-control');
+        }
+    });
+</script>
+{% endblock %}

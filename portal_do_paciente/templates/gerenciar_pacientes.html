@@ -1,169 +1,187 @@
 {% extends 'base.html' %}
-
 {% load static %}
 
-{% block title %}Gerenciar pacientes{% endblock %}
+{% block title %}Gerenciar Pacientes - SAGe{% endblock %}
 
 {% block content %}
-
-<link rel="stylesheet" href="{% static 'css/style_gerenciar_pacientes.css' %}">
-<script src="{% static 'js/js_gerenciar_pacientes.js' %}" defer></script>
-<header>
-  <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-    <div class="container-fluid">
-      <a class="navbar-brand" href="#">
-        <img src="{% static 'images/portal_do_paciente_icon.png' %}" alt="home" width="30" height="30">
-      </a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-        <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarNav">
-        <ul class="navbar-nav">  
-          <li class="nav-item">
-            <a class="nav-link" href="{% url 'portal_do_paciente' id=adm.id%}">Voltar </a>
-            <a class="nav-link" href="{% url 'gestao_de_medicos' id=adm.id%}">Cadastre um novo medico </a>
-            {% comment %}
-            <a class="nav-link" href=#>Guia rápido</a>
-            {% endcomment %}
-            
-          </li>
-        </ul>
-        
-      </div>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1><i class="bi bi-people-fill me-2"></i>Gerenciamento de Pacientes</h1>
+    <div>
+        <a href="{% url 'portal_do_paciente' id=adm.id %}" class="btn btn-outline-secondary me-2"><i class="bi bi-arrow-left"></i> Voltar</a>
+        <a href="{% url 'gestao_de_medicos' id=adm.id %}" class="btn btn-primary"><i class="bi bi-person-badge-fill me-1"></i> Gerenciar Médicos</a>
     </div>
-  </nav>
-</header>
-
-<h1 style="text-align: center;">Gerenciamento</h1>
-<br>
-
-
-<div class="container">
-  <div class="menu">
-    <a href="#dados">Dados</a>
-    
-    <a href="#todas_as_consultas">Todas as consultas</a>
-    
-    <a href="#cadastro">Cadastro</a>
-    
-  </div>
-  
 </div>
-<div class="container mt-3">
-    <form method="get" class="d-flex mb-3">
-         <div class="me-2">
-             <label for="search" class="form-label">Buscar por nome:</label>
-             <input class="form-control" type="search" placeholder="Digite o nome" name="search" value="{{ search_query }}">
-         </div>
-          <div class="me-2">
-              <label for="cpf_search" class="form-label">Buscar por CPF:</label>
-            <input class="form-control" type="search" placeholder="Digite o CPF" name="cpf_search" value="{{ cpf_filter }}">
+
+<div class="row g-4 mb-5">
+    <!-- Busca e Filtros -->
+    <div class="col-12">
+        <div class="card shadow-sm border-0">
+            <div class="card-body">
+                <form method="get" class="row g-3 align-items-end">
+                    <div class="col-md-5">
+                        <label for="search" class="form-label fw-bold">Buscar por nome</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-search"></i></span>
+                            <input class="form-control" type="search" id="search" placeholder="Digite o nome" name="search" value="{{ search_query }}">
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <label for="cpf_search" class="form-label fw-bold">Buscar por CPF</label>
+                        <div class="input-group">
+                            <span class="input-group-text"><i class="bi bi-card-text"></i></span>
+                            <input class="form-control" type="search" id="cpf_search" placeholder="000.000.000-00" name="cpf_search" value="{{ cpf_filter }}">
+                        </div>
+                    </div>
+                    <div class="col-md-2 d-grid">
+                        <button class="btn btn-success" type="submit">Buscar</button>
+                    </div>
+                </form>
+            </div>
         </div>
-        <button class="btn btn-outline-success" type="submit">Buscar</button>
-    </form>
-</div>
-<h2 id="dados" style="text-align: center;">Dados dos pacientes</h2>
-<br>
-<div class="container">
-  <div class="flex-container">
-    {% for paciente_ in pacientes %}
-      <div class="flex-item">
-        {% if not paciente_.is_superuser %}
-          <h3>Paciente ID: {{ paciente_.id }}</h3>
-          {% if paciente_.nome %}
-            <p>Nome: {{ paciente_.nome }}</p>
-          {% endif %}
-          
-          <p>Data de nascimento: {{ paciente_.data_de_nascimento | date:'d/m/Y' }}</p>
-          <p>CPF: {{ paciente_.cpf }}</p>
-          <p>Email: {{ paciente_.email }}</p>
-          {% if paciente_.is_staff %}
-            <p style="color:red">Funcionário (a)</p>
-          {% endif %}
-          <a class="editar" href="{% url 'editar_paciente' id_paciente=paciente_.id id_adm=adm.id %}">Editar dados</a>
-          <a class="editar" href="{% url 'remover_paciente' id=paciente_.id id_adm=adm.id %}">Remover</a>
-        {% endif %}
-      </div>
-    {% endfor %}
-  </div>
-
-  <br>
-  
-     <div class="pagination">
-        <span class="step-links">
-            {% if pacientes.has_previous %}
-                <a href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if cpf_filter %}&cpf_search={{ cpf_filter }}{% endif %}">« Primeira</a>
-                <a href="?page={{ pacientes.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if cpf_filter %}&cpf_search={{ cpf_filter }}{% endif %}">Anterior</a>
-            {% endif %}
-
-            <span class="current">
-                Página {{ pacientes.number }} de {{ pacientes.paginator.num_pages }}.
-            </span>
-
-            {% if pacientes.has_next %}
-                <a href="?page={{ pacientes.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if cpf_filter %}&cpf_search={{ cpf_filter }}{% endif %}">Próxima</a>
-                <a href="?page={{ pacientes.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if cpf_filter %}&cpf_search={{ cpf_filter }}{% endif %}">Última »</a>
-            {% endif %}
-        </span>
     </div>
-    
-    
-  <h2 id="todas_as_consultas"style="text-align: center;">Todas as consultas marcadas</h2>
-  <br>
-  <br>
-  <div class="flex-container container" >
-    {% if agendamentos %}
-    {% for agendamento in agendamentos %}
-      <div class="flex-item">
-        <strong><p style="color: brown;">Médico(a): {{ agendamento.medico.nome }}</p></strong>
-        
-        {% if agendamento.paciente.nome %}
-        <strong><p style="color: brown;">Paciente: {{ agendamento.paciente.nome }}</p></strong>
-        
-        {% endif %}
-        <p>Email do paciente: {{ agendamento.paciente.email }}</p>
-        <p>Especialidade do médico: {{ agendamento.medico.especialidade }}</p>  <!-- Assumindo que medico tem especialidade -->
-        <p>Data: {{ agendamento.data | date:'d/m/Y' }}</p>
-        <p>Hora: {{ agendamento.hora|date:"H:i" }}</p>
-      </div>
-    {% endfor %}
-    {% else %}
-    <h3 style="text-align: center;color:red;">Sem consultas</h3>
-    {% endif %}
-  </div>
-</div>
 
-<div class="container mt-5" >
-  <div id="div-title-cadatro">
-      <h2 id="cadastro" style="text-align: center;">Cadastre um novo paciente</h2>
-  </div>
-  
-  <div class="container">  <!-- Centraliza o formulário -->
-      <div class="col-md-6" id="div-form-cadastro">  <!-- Define a largura máxima do formulário em telas médias -->
-          <form method="POST" class="form-group">
-              {% csrf_token %}
-              {% for field in form %}
-                  <div class="form-group">
-                      <label for="{{ field.id_for_label }}" class="form-label">{{ field.label }}</label>
-                      {{ field }}
-                      {% if field.errors %}
-                          <ul class="errors">
-                              {% for error in field.errors %}
-                                  <li class="text-danger">{{ error }}</li>
-                              {% endfor %}
-                          </ul>
-                      {% endif %}
-                  </div>
-              {% endfor %}
-              <button type="submit" class="btn btn-primary">Cadastrar</button>
-          </form>
-          <br>
-          <br>
+    <!-- Lista de Pacientes -->
+    <div class="col-12">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white">
+                <h2 class="h5 mb-0 py-2">Lista de Pacientes</h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>ID</th>
+                            <th>Nome</th>
+                            <th>CPF</th>
+                            <th>Email</th>
+                            <th>Nascimento</th>
+                            <th>Status</th>
+                            <th>Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for paciente_ in pacientes %}
+                            {% if not paciente_.is_superuser %}
+                                <tr>
+                                    <td>{{ paciente_.id }}</td>
+                                    <td><strong>{{ paciente_.nome|default:"-" }}</strong></td>
+                                    <td>{{ paciente_.cpf }}</td>
+                                    <td>{{ paciente_.email }}</td>
+                                    <td>{{ paciente_.data_de_nascimento | date:'d/m/Y' }}</td>
+                                    <td>
+                                        {% if paciente_.is_staff %}
+                                            <span class="badge bg-danger">Funcionário</span>
+                                        {% else %}
+                                            <span class="badge bg-info text-dark">Paciente</span>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        <div class="btn-group btn-group-sm">
+                                            <a class="btn btn-outline-primary" href="{% url 'editar_paciente' id_paciente=paciente_.id id_adm=adm.id %}" title="Editar"><i class="bi bi-pencil-square"></i></a>
+                                            <a class="btn btn-outline-danger" href="{% url 'remover_paciente' id=paciente_.id id_adm=adm.id %}" title="Remover"><i class="bi bi-trash"></i></a>
+                                        </div>
+                                    </td>
+                                </tr>
+                            {% endif %}
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <!-- Paginação -->
+            <div class="card-footer bg-white py-3">
+                <nav aria-label="Navegação de pacientes">
+                    <ul class="pagination justify-content-center mb-0">
+                        {% if pacientes.has_previous %}
+                            <li class="page-item"><a class="page-link" href="?page=1{% if search_query %}&search={{ search_query }}{% endif %}{% if cpf_filter %}&cpf_search={{ cpf_filter }}{% endif %}">Primeira</a></li>
+                            <li class="page-item"><a class="page-link" href="?page={{ pacientes.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if cpf_filter %}&cpf_search={{ cpf_filter }}{% endif %}">Anterior</a></li>
+                        {% endif %}
+                        <li class="page-item disabled"><span class="page-link">Página {{ pacientes.number }} de {{ pacientes.paginator.num_pages }}</span></li>
+                        {% if pacientes.has_next %}
+                            <li class="page-item"><a class="page-link" href="?page={{ pacientes.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if cpf_filter %}&cpf_search={{ cpf_filter }}{% endif %}">Próxima</a></li>
+                            <li class="page-item"><a class="page-link" href="?page={{ pacientes.paginator.num_pages }}{% if search_query %}&search={{ search_query }}{% endif %}{% if cpf_filter %}&cpf_search={{ cpf_filter }}{% endif %}">Última</a></li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
 
-          <br>
-                      </div>
-  </div>
-  
-  
+    <!-- Todas as Consultas -->
+    <div class="col-12">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-white">
+                <h2 class="h5 mb-0 py-2">Consultas Agendadas</h2>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Paciente</th>
+                            <th>Médico(a)</th>
+                            <th>Especialidade</th>
+                            <th>Data</th>
+                            <th>Hora</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for agendamento in agendamentos %}
+                            <tr>
+                                <td>{{ agendamento.paciente.nome|default:agendamento.paciente.email }}</td>
+                                <td><strong>{{ agendamento.medico.nome }}</strong></td>
+                                <td>{{ agendamento.medico.especialidade }}</td>
+                                <td>{{ agendamento.data | date:'d/m/Y' }}</td>
+                                <td>{{ agendamento.hora|date:"H:i" }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center py-4 text-muted">Sem consultas agendadas</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cadastro de Novo Paciente -->
+    <div class="col-12">
+        <div class="card shadow-sm border-0">
+            <div class="card-header bg-primary text-white">
+                <h2 class="h5 mb-0 py-2">Cadastrar Novo Paciente</h2>
+            </div>
+            <div class="card-body">
+                <form method="POST" class="row g-3">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        <div class="col-md-6 mb-2">
+                            <label for="{{ field.id_for_label }}" class="form-label fw-bold">{{ field.label }}</label>
+                            {{ field }}
+                            {% if field.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {% for error in field.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    {% endfor %}
+                    <div class="col-12 mt-4 d-grid">
+                        <button type="submit" class="btn btn-primary btn-lg">Cadastrar Paciente</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Apply Bootstrap styling to Django forms
+    document.querySelectorAll('input, select, textarea').forEach(el => {
+        if (!el.classList.contains('form-control') && !el.classList.contains('form-select')) {
+            el.classList.add('form-control');
+        }
+    });
+</script>
 {% endblock %}

@@ -1,42 +1,35 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="{% static 'css/style_administracao.css' %}">
-</head>
 
+{% block title %}Administração - SAGe{% endblock %}
 
-<body>
-
-    <nav class="nav-bar">
-        <a href="">Home</a>
-        <a href="">Sobre</a>
-        <a href="">Documentação</a>
-    </nav>
-
-    <div class="main-content">
-        <div class="menu">
-            <br>
-            <div class="conteudo-menu">
-                <a href="#documentacao">Pacientes</a>
-                <a href="">Medicos</a>
-            </div>
-        </div>
-        <div class="container">
-            
-            <div id="documentacao">
-                <div  class="button-close"><p>x</p></div>
-                
-                <br>
-                <p class="conteudo">Para alterar dados -> pacientes -> alterar -> pesquisar </p>
-                
-            </div>
-
+{% block content %}
+<div class="row">
+    <div class="col-md-3">
+        <div class="list-group shadow-sm">
+            <div class="list-group-item bg-dark text-white fw-bold">Menu</div>
+            <a href="{% url 'gestao_de_pacientes' id=user.id %}" class="list-group-item list-group-item-action"><i class="bi bi-people-fill me-2"></i>Pacientes</a>
+            <a href="{% url 'gestao_de_medicos' id=user.id %}" class="list-group-item list-group-item-action"><i class="bi bi-person-badge-fill me-2"></i>Médicos</a>
+            <a href="#documentacao" class="list-group-item list-group-item-action"><i class="bi bi-file-earmark-text me-2"></i>Documentação</a>
         </div>
     </div>
+    <div class="col-md-9">
+        <div class="card shadow-sm border-0 mb-4">
+            <div class="card-body">
+                <h1 class="h2 mb-4">Painel Administrativo</h1>
+                <p>Bem-vindo ao painel de administração do SAGe. Utilize o menu lateral para gerenciar os recursos do sistema.</p>
+            </div>
+        </div>
 
-</body>
-</html>
+        <div id="documentacao" class="card shadow-sm border-0">
+            <div class="card-header bg-info text-white d-flex justify-content-between align-items-center">
+                <h3 class="h5 mb-0">Documentação Rápida</h3>
+                <button type="button" class="btn-close btn-close-white" aria-label="Close"></button>
+            </div>
+            <div class="card-body">
+                <p class="mb-0">Para alterar dados: <strong>Pacientes -> Editar -> Pesquisar</strong></p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
